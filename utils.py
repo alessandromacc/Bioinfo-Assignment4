@@ -70,3 +70,26 @@ class CpGOutModel(Model):
     '''Inside model for CpG island, pre-computed and stored in a StandardModel-like object. Fast access for repetitive executions.'''
     model = pd.DataFrame([[0.29, 0.20, 0.29, 0.23],[0.32, 0.29, 0.07, 0.31],[0.26, 0.23, 0.29, 0.21],[0.18, 0.23, 0.29, 0.29]], columns=Constants.nucleotides, index=Constants.nucleotides)
     average_source_length = 566
+
+class FileHandler:
+    @staticmethod
+    def writeEvaluation(filename, scores, wsize, stringency: int = '?', peaks = None):
+        peaks = [i for i in peaks[0]]
+        file = open(filename, 'w')
+        file.write(f'@length:{len(scores)+wsize-1};window_size:{wsize};stringency:{str(stringency)};peaks:{peaks}')
+        file.write('\n')
+        for i in range(len(scores)):
+            if i == len(scores)-1:
+                file.write(f'{scores[i]}')
+            else:
+                file.write(f'{scores[i]},')
+        file.close()
+    
+    @staticmethod
+    def evaluationFromFile(filename):
+        file = open(filename, 'r')
+        rows = file.readlines()
+        header = rows[0][1:-1].split(';')
+        header = [i.split(':')[1] for i in header]
+        scores = rows[1].split(',')
+        return [scores]+header

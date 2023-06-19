@@ -1,6 +1,6 @@
 import numpy
 from markov import MarkovModel, GenomeInOutWindow, logRatioEvaluate
-from utils import Generator, CpGInModel, CpGOutModel
+from utils import Generator, CpGInModel, CpGOutModel, FileHandler
 import sys
 
 '''
@@ -65,6 +65,8 @@ fast = False
 stringency = 20
 logging = True
 callPeaks = False
+save = False
+savename = None
 
 for i in range(len(args)):
     if args[i] == '-q':
@@ -91,6 +93,9 @@ for i in range(len(args)):
         logging = False
     elif args[i] == '-k' or args[i] == '--peak':
         callPeaks = True
+    elif args[i] == '--save':
+        save = True
+        savename = args[i+1]
 
 if scan:
     if path != None and random:
@@ -120,6 +125,7 @@ else:
 
 if not scan:
     if logging:
+        print(f'Parameters set: scan: {scan}; filepath: {path}; random: {random}; length: {l}; fast: {fast}')
         print(f'Evaluating query sequence: "{query}"')
         print(f'Reference inside/outside model derived from hg19 chromosome 22 CpG islands sequences and other random chromosome 22 sequences')
     if log_prob:
@@ -144,12 +150,16 @@ if not scan:
 else:
     if wsize == None:
         if logging:
-            print(f'Scanning {l} bases long genome, window size: {insidemod.average_source_length}, peak sharpness: {round(numpy.log(insidemod.average_source_length)*stringency)}, peak calling threshold: {round(numpy.log2(insidemod.average_source_length), 1)}')
+            print(f'Parameters set: scan: {scan}; filepath: {path}; random: {random}; length: {l}; fast: {fast}; plot: {plot}; peak call: {callPeaks}; stringency: {stringency}; window size: {insidemod.average_source_length}')
+            print(f'Scanning {l} bases long genome, window size: {insidemod.average_source_length}, peak sharpness: {round(numpy.log(insidemod.average_source_length)*stringency)}, peak calling threshold: {round(numpy.log2(insidemod.average_source_length), 1)}', '\n')
     else:
         if logging:
-            print(f'Scanning {l} bases long genome, window size: {wsize}, peak sharpness: {round(numpy.log(wsize)*stringency)}, peak calling threshold: {round(numpy.log2(wsize), 1)}')
+            print(f'Parameters set: scan: {scan}; filepath: {path}; random: {random}; length: {l}; fast: {fast}; plot: {plot}; peak call: {callPeaks}; stringency: {stringency}; window size: {wsize}')
+            print(f'Scanning {l} bases long genome, window size: {wsize}, peak sharpness: {round(numpy.log(wsize)*stringency)}, peak calling threshold: {round(numpy.log2(wsize), 1)}', '\n')
     data, wsize = GenomeInOutWindow.evaluate(query, insidemod, outsidemod, wsize, logging)
     call, scores = GenomeInOutWindow.callPeaks(data, wsize, stringency)
     print(f'Potential start sites identified [position, score]: {[[call[i], scores[i]] for i in range(len(call))]}')
+    if save:
+        FileHandler.writeEvaluation(savename, data, wsize, stringency, GenomeInOutWindow.callPeaks(data, wsize, stringency))
     if plot:
         GenomeInOutWindow.plotScore(data, wsize, stringency, callPeaks)

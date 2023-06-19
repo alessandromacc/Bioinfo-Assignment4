@@ -135,4 +135,4 @@ def logRatioEvaluate(s1: float, s2: float, log: bool = True) -> float:
     if log:
         return numpy.log2(s1) - numpy.log2(s2)
     else:
-        return s1 - s2
+        return round(s1 - s2, 2)
