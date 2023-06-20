@@ -87,6 +87,20 @@ class GenomeInOutWindow:
             return data, wsize
         
         @staticmethod
+        def quickPlot(dataArray, ws, stringency, peaks):
+            plt.plot([i for i in range(len(dataArray))], dataArray, linewidth = 1)
+            plt.xlabel('Genome starting position')
+            plt.ylabel('CpG island probability')
+            plt.title(f'Genome scanning, width: {ws}, peak sharpness: {round(numpy.log(ws)*stringency)}'+'\n'+f'peak calling threshold: {round(numpy.log2(ws), 1)}')
+            plt.axhline(0, 0, color = 'black', linewidth = 2)
+            for i in peaks:
+                plt.axvline(i, color = 'red', linewidth = 0.5)
+            plt.axhline(numpy.log2(ws), color = 'green', linewidth=0.8)
+            plt.yticks(list(plt.yticks()[0]) + [numpy.log2(ws)])
+            plt.grid(True)
+            plt.show()
+        
+        @staticmethod
         def plotScore(dataArray, ws, stringency: int = 20, peaks: bool = False) -> None:
             '''The method is used for plotting the data one produced with genome scanning. The parameters include "dataArray", the list of scores
             for each position of the genome, "ws", the window size, employed in peak calling, and the stringency, again in peak calling.'''

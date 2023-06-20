@@ -76,8 +76,15 @@ class FileHandler:
     def writeEvaluation(filename, scores, wsize, stringency: int = '?', peaks = None):
         peaks = [i for i in peaks[0]]
         file = open(filename, 'w')
-        file.write(f'@length:{len(scores)+wsize-1};window_size:{wsize};stringency:{str(stringency)};peaks:{peaks}')
+        file.write(f'@length:{len(scores)+wsize-1};window_size:{wsize};stringency:{str(stringency)}')
         file.write('\n')
+        if len(peaks) > 0:
+            for i in range(len(peaks)):
+                if i < len(peaks) - 1:
+                    file.write(str(peaks[i])+',')
+                else:
+                    file.write(str(peaks[i]))
+            file.write('\n')
         for i in range(len(scores)):
             if i == len(scores)-1:
                 file.write(f'{scores[i]}')
@@ -90,6 +97,12 @@ class FileHandler:
         file = open(filename, 'r')
         rows = file.readlines()
         header = rows[0][1:-1].split(';')
-        header = [i.split(':')[1] for i in header]
-        scores = rows[1].split(',')
-        return [scores]+header
+        header = [int(i.split(':')[1]) for i in header]
+        if len(rows) == 3:
+            peaks = rows[1][:-1].split(',')
+            peaks = [int(i) for i in peaks]
+            scores = [float(i) for i in rows[2].split(',')]
+        else:
+            peaks = []
+            scores = [float(i) for i in rows[1].split(',')]
+        return [scores]+header+peaks
