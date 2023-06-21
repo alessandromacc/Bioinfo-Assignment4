@@ -73,7 +73,11 @@ class CpGOutModel(Model):
 
 class FileHandler:
     @staticmethod
-    def writeEvaluation(filename, scores, wsize, stringency: int = '?', peaks = None):
+    def writeEvaluation(filename: str, scores: list, wsize: int, stringency: int, peaks = None) -> None:
+        '''Writes informations about the scanning performed in a file whose name has to be provided by the user.
+        In the first line are written the parameters of the operation, in the second line, if present, are written
+        the locations of the peaks, and in line 3 the positional scores; if no peaks are present, the scores are
+        directly written in the second line.'''
         peaks = [i for i in peaks[0]]
         file = open(filename, 'w')
         file.write(f'@length:{len(scores)+wsize-1};window_size:{wsize};stringency:{str(stringency)}')
@@ -93,7 +97,9 @@ class FileHandler:
         file.close()
     
     @staticmethod
-    def evaluationFromFile(filename):
+    def evaluationFromFile(filename: str) -> list:
+        '''By providing the file path of the evaluation file, the method retrieves from there the saved data about the
+        scanning performed. Can distinguish between 2 lines files (no peaks) and 3 lines ones (with peaks).'''
         file = open(filename, 'r')
         rows = file.readlines()
         header = rows[0][1:-1].split(';')

@@ -87,7 +87,10 @@ class GenomeInOutWindow:
             return data, wsize
         
         @staticmethod
-        def quickPlot(dataArray, ws, stringency, peaks):
+        def quickPlot(dataArray: list|tuple, ws: int, stringency: int = 20, peaks = None) -> None:
+            '''Useful when the user is simply in need of plotting data already known. Takes an array of scores,
+            the window size of the genome scanning, the stringency of the peak calling and the location of the peaks.
+            Devised to quicjly plot the informations from a file written by FileHandler.writeEvaluation'''
             plt.plot([i for i in range(len(dataArray))], dataArray, linewidth = 1)
             plt.xlabel('Genome starting position')
             plt.ylabel('CpG island probability')
@@ -101,7 +104,7 @@ class GenomeInOutWindow:
             plt.show()
         
         @staticmethod
-        def plotScore(dataArray, ws, stringency: int = 20, peaks: bool = False) -> None:
+        def plotScore(dataArray: list|tuple, ws: int, stringency: int = 20, peaks: bool = False) -> None:
             '''The method is used for plotting the data one produced with genome scanning. The parameters include "dataArray", the list of scores
             for each position of the genome, "ws", the window size, employed in peak calling, and the stringency, again in peak calling.'''
             plt.plot([i for i in range(len(dataArray))], dataArray, linewidth = 1)
@@ -122,7 +125,8 @@ class GenomeInOutWindow:
         def callPeaks(dataArray: list|tuple, ws: int, stringency: int = 20) -> tuple:
             '''Algorithm for peak calling; receives the scores data as parameter, as well as the window size and the set stringency of
             the operation, which are used to compute a probability threshold for peaks and height. Returns a tuple containing the list of the possible
-            start sites of the considered genomic feature identified and the list of their scores.'''
+            start sites of the considered genomic feature identified and the list of their scores. Fine tuning of the stringency
+            value is recommended.'''
             lastMax = 0
             lastMin = 0
             putativeStartSites = []
@@ -139,8 +143,8 @@ class GenomeInOutWindow:
                         lastMax, potentialMax = potentialMax, i
                         if lastMax not in putativeStartSites:
                             putativeStartSites.append(lastMax)
-            if dataArray[potentialMax] - dataArray[lastMin] >= numpy.log(ws)*stringency/2 and dataArray[potentialMax] >= numpy.log2(ws):
-                putativeStartSites.append(potentialMax)
+            #if dataArray[potentialMax] - dataArray[lastMin] >= numpy.log(ws)*stringency/2 and dataArray[potentialMax] >= numpy.log2(ws):
+            #    putativeStartSites.append(potentialMax)
             return putativeStartSites, [round(dataArray[i], 1) for i in putativeStartSites]
 
 
