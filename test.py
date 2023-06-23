@@ -1,5 +1,5 @@
 import numpy
-from markov import MarkovModel, GenomeInOutWindow, logRatioEvaluate
+from markov import MarkovChain, GenomeInOutWindow, logRatioEvaluate
 from utils import Generator, CpGInModel, CpGOutModel, FileHandler
 import sys
 
@@ -128,11 +128,11 @@ else:
 
 if not read:
     if fast:
-        insidemod = MarkovModel(model = CpGInModel)
-        outsidemod = MarkovModel(model = CpGOutModel)
+        insidemod = MarkovChain(model = CpGInModel)
+        outsidemod = MarkovChain(model = CpGOutModel)
     else:
-        insidemod = MarkovModel(path = 'CpG.txt')
-        outsidemod = MarkovModel(path = 'outside.txt')
+        insidemod = MarkovChain(path = 'CpG.txt')
+        outsidemod = MarkovChain(path = 'outside.txt')
 
     if not scan:
         if logging:

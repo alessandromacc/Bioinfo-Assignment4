@@ -3,7 +3,7 @@ import numpy
 from utils import Constants, Model, StandardModel, NoModel
 from matplotlib import pyplot as plt
 
-class MarkovModel(Model):
+class MarkovChain(Model):
     '''The class MarkovModel implements a markov chain of order 1, in a structurate object. It can generate
     the model from sequences in a file, provided as argument path, or from a single sequence provided as the 
     argument s, or a model compliant with the standards of the Model class in utils.py can be provided, from which
@@ -64,7 +64,7 @@ class GenomeInOutWindow:
         Provides the necessary methods for scanning such genomes with a sliding window, evaluating each position and representing
         graphically the results.'''
         @staticmethod
-        def evaluate(genome: str, inmod: MarkovModel, outmod: MarkovModel, wsize: int = None, log: bool = True) -> tuple:
+        def evaluate(genome: str, inmod: MarkovChain, outmod: MarkovChain, wsize: int = None, log: bool = True) -> tuple:
             '''Receives as input the reference genome to scan as a string, the inside model and the outside model, biologically significant, both required to be
             an instance of the MarkovModel class for compatibility, the size of the sliding window, which can affect the scores produced and a boolean "log", which
             will turn off unnecessary logging if set to False.
