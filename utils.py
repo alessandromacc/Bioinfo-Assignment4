@@ -3,6 +3,7 @@ import pandas as pd
 
 class Constants:
     nucleotides = ['A', 'C', 'G', 'T']
+    amino_acids = ['F', 'L', 'S',  'Y', 'C', 'W', 'P', 'H', 'Q', 'R', 'I', 'M', 'T', 'N', 'K', 'V', 'A', 'D', 'E', 'G']
 
 class Generator:
     '''Utility class that contains useful methods for generating random sequences or retrieving entire ones from files.'''
