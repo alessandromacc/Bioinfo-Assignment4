@@ -21,7 +21,7 @@ the following flags:
 -f <str>: set the file path for sequence extraction;
 -r : generate randomly the query sequence;
 -l <int>: set the length of the random query to generate (default 1000);
--L , --log : use sum of log probabilities to evaluate a query (default False, non-changeable in scan mode);
+-L , --log : use sum of log probabilities to evaluate a query (default True, non-changeable in scan mode, disabling it might run into Errors for very low scores);
 -s : set the mode to genome scanning;
 -P , --plot : enable data plotting when in scan mode (default False);
 -w <int>: set the window size in scan mode;
@@ -42,21 +42,21 @@ all the CpG islands in chromosome 22 and outside.txt containing row by row rando
 The code for preparing these files from the original annotation (annot.txt) and sequence (chr22.fa) is in the file cpg_data_setup.py.
 
 In general, the hierarchy of provided inputs for normal evaluation is:
-1. Path - entire row extraction from file
-2. Query
-3. Random generation of modifiable length
+1. Path - entire row extraction from file (-f)
+2. Query (-q)
+3. Random generation of modifiable length (-r)
 
 Whereas for the scan mode:
-1. Path - random fragment of modifiable length
-2. Path - whole sequence from file
-3. Random generation of modifiable length
+1. Path - random fragment of modifiable length (-s -f -r)
+2. Path - whole sequence from file (-s -f)
+3. Random generation of modifiable length (-s -r)
 x. Any declared query sequence here is ignored
 '''
 
 args = sys.argv[1:]
 query = None
 path = None
-log_prob = False
+log_prob = True
 scan = False
 random = False
 plot = False
@@ -81,7 +81,7 @@ for i in range(len(args)):
     elif args[i] == '-l':
         l = int(args[i+1])
     elif args[i] == '-L' or args[i] == '--log':
-        log_prob = True
+        log_prob = False
     elif args[i] == '-s':
         scan = True
         read = False
@@ -144,17 +144,17 @@ if not read:
                 print('Using sum of the logarithms to evaluate query score')
 
         if not log_prob:
-            insidescore = insidemod.scoreQuery(query)
-            outsidescore = outsidemod.scoreQuery(query)
+            insidescore = insidemod.scoreQuery(query, log_prob)
+            outsidescore = outsidemod.scoreQuery(query, log_prob)
             print(f'Inside score:', insidescore)
             print(f'Outside score:', outsidescore)
-            logratio = logRatioEvaluate(insidescore, outsidescore, True)
+            logratio = logRatioEvaluate(insidescore, outsidescore, log_prob)
         else:
-            insidescore = insidemod.scoreQuery(query, True)
-            outsidescore = outsidemod.scoreQuery(query, True)
+            insidescore = insidemod.scoreQuery(query, log_prob)
+            outsidescore = outsidemod.scoreQuery(query, log_prob)
             print(f'Inside score:', insidescore)
             print(f'Outside score:', outsidescore)
-            logratio = logRatioEvaluate(insidescore, outsidescore, False)
+            logratio = logRatioEvaluate(insidescore, outsidescore, log_prob)
 
         print(f'Final log ratio evaluation: {logratio}')
 

@@ -43,7 +43,7 @@ class MarkovChain(Model):
             self.model = model.model
             self.average_source_length = model.average_source_length
     
-    def scoreQuery(self, q: str, log: bool = False) -> float:
+    def scoreQuery(self, q: str, log: bool = True) -> float:
         '''Outputs the score of a query sequence q, evaluated on the model represented by the class instance.
         By parsing bool = True one makes the method switch to calculating such score by sum of logarithms,
         instead of by product of probabilities from the model.'''
@@ -150,7 +150,7 @@ class GenomeInOutWindow:
 
 def logRatioEvaluate(s1: float, s2: float, log: bool = True) -> float:
     '''Computes the log ratio evaluation from the scores of a sequence tested on two alternative models.'''
-    if log:
+    if not log:
         return numpy.log2(s1) - numpy.log2(s2)
     else:
         return round(s1 - s2, 2)
